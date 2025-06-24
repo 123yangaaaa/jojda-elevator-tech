@@ -1,0 +1,59 @@
+{
+  "products": [
+    {
+      "name": "ARISE",
+      "product_type": "电梯",
+      "specs": {
+        "载重(kg)": "1000",
+        "速度(m/s)": "1.75",
+        "轿厢宽度(mm)": "1100",
+        "轿厢深度(mm)": "2100",
+        "对重位置": "左侧"
+      }
+    },
+    {
+      "name": "Gen3 MRL",
+      "product_type": "电梯",
+      "specs": {
+        "载重(kg)": "1000",
+        "速度(m/s)": "1.5",
+        "轿厢宽度(mm)": "1600",
+        "轿厢深度(mm)": "1500"
+      }
+    },
+    {
+      "name": "Gen3 MR",
+      "product_type": "电梯",
+      "specs": {
+        "载重(kg)": "1600",
+        "速度(m/s)": "2.0",
+        "轿厢宽度(mm)": "1800",
+        "轿厢深度(mm)": "1700"
+      }
+    },
+    {
+      "name": "515NPE",
+      "product_type": "扶梯",
+      "specs": {
+        "提升高度(m)": "10",
+        "倾角(deg)": "35",
+        "速度(m/s)": "0.5"
+      }
+    },
+    {
+      "name": "520NPE",
+      "product_type": "扶梯",
+      "specs": {
+        "提升高度(m)": "15",
+        "倾角(deg)": "30",
+        "速度(m/s)": "0.65"
+      }
+    }
+  ],
+  "download_settings": {
+    "download_dir": "otis_products",
+    "wait_time_between_products": 10,
+    "download_timeout": 90,
+    "retry_count": 2
+  }
+} 

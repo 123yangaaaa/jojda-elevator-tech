@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  # 前端 React 应用
+  frontend:
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+    container_name: jojda-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - jojda-network
+    depends_on:
+      - backend
+    volumes:
+      # 如果有SSL证书，挂载证书目录
+      # - ./ssl:/etc/ssl:ro
+      - ./logs/nginx:/var/log/nginx
+    environment:
+      - NODE_ENV=production
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`ailingjing.cn`,`www.ailingjing.cn`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
+
+  # 后端 .NET API
+  backend:
+    build:
+      context: ../server-dotnet
+      dockerfile: Dockerfile
+    container_name: jojda-backend
+    restart: unless-stopped
+    ports:
+      - "5000:80"
+    networks:
+      - jojda-network
+    depends_on:
+      - database
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Server=database;Database=JojdaElevatorDB;User=jojda_user;Password=${DB_PASSWORD};
+    volumes:
+      - ./logs/backend:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MySQL 数据库
+  database:
+    image: mysql:8.0
+    container_name: jojda-database
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    networks:
+      - jojda-network
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=JojdaElevatorDB
+      - MYSQL_USER=jojda_user
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+      - ./logs/mysql:/var/log/mysql
+    command: --default-authentication-plugin=mysql_native_password
+
+  # Redis 缓存（可选）
+  redis:
+    image: redis:7-alpine
+    container_name: jojda-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - jojda-network
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  # Nginx 反向代理（如果需要）
+  # nginx-proxy:
+  #   image: nginx:1.25-alpine
+  #   container_name: jojda-proxy
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   networks:
+  #     - jojda-network
+  #   volumes:
+  #     - ./nginx-proxy.conf:/etc/nginx/nginx.conf:ro
+  #     - ./ssl:/etc/ssl:ro
+
+networks:
+  jojda-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local 
