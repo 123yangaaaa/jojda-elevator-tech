@@ -421,8 +421,8 @@ CREATE TABLE maintenance_requests (
 
 - **公司**: joj达电梯科技有限公司
 - **网站**: [https://ailingjing.cn](https://ailingjing.cn)
-- **邮箱**: info@jojdaelevator.com
-- **电话**: 400-123-4567
+- **邮箱**: 605490648@qq.com
+- **电话**: 18262591815
 - **地址**: 北京市朝阳区科技园区 joj达电梯科技大厦
 
 ---
